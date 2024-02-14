@@ -65,16 +65,18 @@ git commit -m "Initial commit with Flower setup"
 ```bash
 git push origin main
 ```
-
-## Integration of Customized Client Selection Algorithms:
-
-The next steps involve integrating customized client selection algorithms into the Federated Learning setup. The following algorithms are planned to be integrated:
-
-1. **FedCs (Federated Client Selection):**
-   - Detailed steps for integrating the FedCs algorithm will be added here.
-
-2. **RBCS-F (Reputation Based Client Selection with Fairness):**
-   - Detailed steps for integrating the RBCS-F algorithm will be added here.
+## Customizing Flower orchostration 
+### Custom Client Manager
+Created a class for client manager : AdjustedClientManager(ClientManager) 
+This class, AdjustedClientManager, extends the functionality of the ClientManager class by providing a pool of available clients.
+It includes methods for waiting until a specified number of clients are available, registering and unregistering Flower ClientProxy instances, 
+and sampling a specified number of clients based on certain criteria.
+### Custom strategy
+It orchestrates the selection, configuration, and aggregation of clients during training and evaluation rounds, providing methods to configure rounds, aggregate results, and initialize global model parameters. The class allows customization through various parameters, such as the fraction of clients used, minimum required clients, evaluation functions, and configuration functions.
+### Custom Criterian for client selection
+AdjustedCriterion class : implementing client sampling criteria during training and evaluation rounds. 
+It contains an abstract method select that subclasses must implement to decide whether a given client should be eligible for sampling, 
+with the default implementation in AdjustedCriterion always returning True
 
 Keep in mind to follow the appropriate documentation for each client selection algorithm and ensure compatibility with the Flower FL framework.
 
