@@ -1,106 +1,89 @@
-# Flower Example using Custom Metrics
+# Project Title: Federated Learning Client Selection
 
-This simple example demonstrates how to calculate custom metrics over multiple clients beyond the traditional ones available in the ML frameworks. In this case, it demonstrates the use of ready-available `scikit-learn` metrics: accuracy, recall, precision, and f1-score.
+## Overview
 
-Once both the test values (`y_test`) and the predictions (`y_pred`) are available on the client side (`client.py`), other metrics or custom ones are possible to be calculated.
+This project focuses on implementing Federated Learning (FL) with a customized client selection approach. The Federated Learning setup includes a Flower server and multiple Flower clients that participate in the learning process.
 
-The main takeaways of this implementation are:
+## Steps to Launch a Local Server using Flower:
 
-- the use of the `output_dict` on the client side - inside `evaluate` method on `client.py`
-- the use of the `evaluate_metrics_aggregation_fn` - to aggregate the metrics on the server side, part of the `strategy` on `server.py`
+### 1. Clone the Repository and Navigate to the Custom Metrics Example:
 
-This example is based on the `quickstart-tensorflow` with CIFAR-10, source [here](https://flower.dev/docs/quickstart-tensorflow.html), with the addition of [Flower Datasets](https://flower.dev/docs/datasets/index.html) to retrieve the CIFAR-10.
-
-Using the CIFAR-10 dataset for classification, this is a multi-class classification problem, thus some changes on how to calculate the metrics using `average='micro'` and `np.argmax` is required. For binary classification, this is not required. Also, for unsupervised learning tasks, such as using a deep autoencoder, a custom metric based on reconstruction error could be implemented on client side.
-
-## Project Setup
-
-Start by cloning the example project. We prepared a single-line command that you can copy into your shell which will checkout the example for you:
-
-```shell
+```bash
 git clone --depth=1 https://github.com/adap/flower.git && mv flower/examples/custom-metrics . && rm -rf flower && cd custom-metrics
 ```
 
-This will create a new directory called `custom-metrics` containing the following files:
+### 2. Create and Activate a Virtual Environment:
 
-```shell
--- pyproject.toml
--- requirements.txt
--- client.py
--- server.py
--- run.sh
--- README.md
+```bash
+python -m venv fl
+fl\Scripts\Activate.ps1
 ```
 
-### Installing Dependencies
+### 3. Install Requirements:
 
-Project dependencies (such as `scikit-learn`, `tensorflow` and `flwr`) are defined in `pyproject.toml` and `requirements.txt`. We recommend [Poetry](https://python-poetry.org/docs/) to install those dependencies and manage your virtual environment ([Poetry installation](https://python-poetry.org/docs/#installation)) or [pip](https://pip.pypa.io/en/latest/development/), but feel free to use a different way of installing dependencies and managing virtual environments if you have other preferences.
-
-#### Poetry
-
-```shell
-poetry install
-poetry shell
-```
-
-Poetry will install all your dependencies in a newly created virtual environment. To verify that everything works correctly you can run the following command:
-
-```shell
-poetry run python3 -c "import flwr"
-```
-
-If you don't see any errors you're good to go!
-
-#### pip
-
-Write the command below in your terminal to install the dependencies according to the configuration file requirements.txt.
-
-```shell
-python -m venv venv
-source venv/bin/activate
+```bash
 pip install -r requirements.txt
 ```
 
-## Run Federated Learning with Custom Metrics
+### 4. Start the Flower Server:
 
-Afterwards you are ready to start the Flower server as well as the clients. You can simply start the server in a terminal as follows:
-
-```shell
+```bash
 python server.py
 ```
 
-Now you are ready to start the Flower clients which will participate in the learning. To do so simply open two more terminals and run the following command in each:
+### 5. Launch Flower Clients:
 
-```shell
+Open two additional terminals and run the following command in each:
+
+```bash
 python client.py
 ```
 
-Alternatively you can run all of it in one shell as follows:
+## GitHub Repository Setup:
 
-```shell
-python server.py &
-# Wait for a few seconds to give the server enough time to start, then:
-python client.py &
-python client.py
+### 1. Initialize a Git Repository:
+
+```bash
+git init
 ```
 
-or
+### 2. Add the Remote Repository URL:
 
-```shell
-chmod +x run.sh
-./run.sh
+```bash
+git remote add origin <repo_url>
 ```
 
-You will see that Keras is starting a federated training. Have a look to the [Flower Quickstarter documentation](https://flower.dev/docs/quickstart-tensorflow.html) for a detailed explanation. You can add `steps_per_epoch=3` to `model.fit()` if you just want to evaluate that everything works without having to wait for the client-side training to finish (this will save you a lot of time during development).
+### 3. Stage Changes and Commit:
 
-Running `run.sh` will result in the following output (after 3 rounds):
-
-```shell
-INFO flwr 2024-01-17 17:45:23,794 | app.py:228 | app_fit: metrics_distributed {
-    'accuracy': [(1, 0.10000000149011612), (2, 0.10000000149011612), (3, 0.3393000066280365)], 
-    'acc': [(1, 0.1), (2, 0.1), (3, 0.3393)], 
-    'rec': [(1, 0.1), (2, 0.1), (3, 0.3393)], 
-    'prec': [(1, 0.1), (2, 0.1), (3, 0.3393)], 
-    'f1': [(1, 0.10000000000000002), (2, 0.10000000000000002), (3, 0.3393)]
-}
+```bash
+git add .
+git commit -m "Initial commit with Flower setup"
 ```
+
+### 4. Push to the Main Branch:
+
+```bash
+git push origin main
+```
+## Customizing Flower orchostration 
+### Custom Client Manager
+Created a class for client manager : AdjustedClientManager(ClientManager) 
+This class, AdjustedClientManager, extends the functionality of the ClientManager class by providing a pool of available clients.
+It includes methods for waiting until a specified number of clients are available, registering and unregistering Flower ClientProxy instances, 
+and sampling a specified number of clients based on certain criteria.
+### Custom strategy
+It orchestrates the selection, configuration, and aggregation of clients during training and evaluation rounds, providing methods to configure rounds, aggregate results, and initialize global model parameters. The class allows customization through various parameters, such as the fraction of clients used, minimum required clients, evaluation functions, and configuration functions.
+### Custom Criterian for client selection
+AdjustedCriterion class : implementing client sampling criteria during training and evaluation rounds. 
+It contains an abstract method select that subclasses must implement to decide whether a given client should be eligible for sampling, 
+with the default implementation in AdjustedCriterion always returning True
+
+Keep in mind to follow the appropriate documentation for each client selection algorithm and ensure compatibility with the Flower FL framework.
+
+## Contributing:
+
+Contributions are welcome! If you have improvements, suggestions, or new features, please feel free to open issues or pull requests.
+
+## License:
+
+This project is licensed under the [MIT License](LICENSE).
