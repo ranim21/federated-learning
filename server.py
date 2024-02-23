@@ -212,6 +212,7 @@ class AdjustedClientManager(ClientManager):
         # Sample clients which meet the criterion
         available_cids = list(self.clients)
         # print('before condition')
+    
         if num_clients > len(available_cids):
             print(
                 "Sampling failed: number of available clients"
@@ -220,6 +221,7 @@ class AdjustedClientManager(ClientManager):
                 num_clients,
             )
             return []
+        
         # print("after condition")
         # Have a fair partition from each demographic group by race
         # Following Fjord Rules in filtering by p-values for a balanced selection

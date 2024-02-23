@@ -22,6 +22,8 @@ from flwr.server.client_proxy import ClientProxy
 
 from abc import ABC, abstractmethod
 
+from flwr.server.strategy.aggregate import aggregate, aggregate_median, weighted_loss_avg
+
 # Try to find the parameters ins and use them in the criterion; also, implement the fedcs there.
 # implement it in the select in the criteria
 # find out more about the linking between the client and how it's being using within the proxy and client manager
@@ -63,7 +65,7 @@ from flwr.common.logger import log
 from flwr.server.client_manager import ClientManager
 from flwr.server.client_proxy import ClientProxy
 
-from flwr.server.strategy.aggregate import aggregate, aggregate_inplace, weighted_loss_avg
+# from flwr.server.strategy.aggregate import aggregate, aggregate_inplace, weighted_loss_avg
 from flwr.server.strategy.strategy import Strategy
 
 WARNING_MIN_AVAILABLE_CLIENTS_TOO_LOW = """
@@ -260,7 +262,7 @@ class FedAvg(Strategy):
 
         if self.inplace:
             # Does in-place weighted average of results
-            aggregated_ndarrays = aggregate_inplace(results)
+            aggregated_ndarrays = aggregate_median(results)
         else:
             # Convert results
             weights_results = [
